@@ -34,6 +34,9 @@ public class BookServiceImpl implements BookService {
     @Override
     public Optional<BookDto> getBookById(long id) {
         Optional<Books>  bookId = bookRepository.findById(id);
+        if (!bookId.isPresent() ) {
+            return null;
+        }
         return  bookId.map(book -> mapperBook.toDto(book));
     }
 
@@ -50,14 +53,13 @@ public class BookServiceImpl implements BookService {
         if (!bookId.isPresent()) {
             return null;
         }
-        Books book = mapperBook.toEntity(bookdDto);
         Books existingBook = bookId.get();
 
-        existingBook.setTitle(book.getTitle());
-        existingBook.setAuthor(book.getAuthor());
-        existingBook.setGenre(book.getGenre());
-        existingBook.setPublicationDate(book.getPublicationDate());
-        existingBook.setQuantity(book.getQuantity());
+        existingBook.setTitle(bookdDto.getTitle());
+        existingBook.setAuthor(bookdDto.getAuthor());
+        existingBook.setGenre(bookdDto.getGenre());
+        existingBook.setPublicationDate(bookdDto.getPublicationDate());
+        existingBook.setQuantity(bookdDto.getQuantity());
         ;
 
         return bookRepository.save(existingBook);
@@ -77,6 +79,9 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDto> getAllBooksAvailable() {
         List<Books> books = bookRepository.findByQuantityGreaterThan(0);
+        if (books.isEmpty()) {
+            return null;
+        }
         return books.stream()
             .map(book-> mapperBook.toDto(book))
             .collect(Collectors.toList());

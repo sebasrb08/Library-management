@@ -124,11 +124,16 @@ public class LoanServiceImpl implements LoanService {
 
     public void substractQuantity(Loans loan){
         Optional<BookDto> bookId = bookService.getBookById(loan.getBook().getId());
-        BookDto bookDto = bookId.get();
-        int cantidadBook = bookDto.getQuantity();
-        bookDto.setQuantity(cantidadBook-1);
-        
-        bookService.updateBook(bookDto,loan.getBook().getId());
+        if (bookId.isPresent()) {
+            BookDto bookDto = bookId.get();
+            int cantidadBook = bookDto.getQuantity();
+            bookDto.setQuantity(cantidadBook-1);
+            
+            bookService.updateBook(bookDto,loan.getBook().getId());
+        }else{
+            System.out.println("Error");
+        }
+
     }
 
     public void additionQuantity(Loans loan){
